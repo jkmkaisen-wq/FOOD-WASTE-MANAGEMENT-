@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare Connect | Food Waste Management System</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Chart.js for Admin Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#10B981', // Emerald 500
+                        secondary: '#059669', // Emerald 600
+                        dark: '#064E3B', // Emerald 900
+                        light: '#D1FAE5', // Emerald 100
+                        accent: '#F59E0B', // Amber 500
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth Page Transitions */
+        .page-enter {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #10B981;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Booking Timer Pulse */
+        @keyframes timerPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .timer-pulse {
+            animation: timerPulse 1.5s ease-in-out infinite;
+        }
+
+        .booking-card {
+            border-left: 4px solid #F59E0B;
+        }
+
+        .claimed-card {
+            border-left: 4px solid #10B981;
+        }
+
+        /* Login Page Styles */
+        .login-bg {
+            background: linear-gradient(-45deg, #0f766e, #10B981, #3B82F6, #8B5CF6, #EC4899, #F59E0B);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .login-float {
+            animation: loginFloat 6s ease-in-out infinite;
+        }
+
+        .login-float-delay {
+            animation: loginFloat 8s ease-in-out 2s infinite;
+        }
+
+        @keyframes loginFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-15px) rotate(3deg);
+            }
+
+            66% {
+                transform: translateY(8px) rotate(-2deg);
+            }
+        }
+
+        .role-card-donor {
+            border: 2px solid transparent;
+            background-image: linear-gradient(white, white), linear-gradient(135deg, #10B981, #059669);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .role-card-donor:hover {
+            background-image: linear-gradient(#ecfdf5, #ecfdf5), linear-gradient(135deg, #10B981, #059669);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .role-card-receiver {
+            border: 2px solid transparent;
+            background-image: linear-gradient(white, white), linear-gradient(135deg, #3B82F6, #8B5CF6);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .role-card-receiver:hover {
+            background-image: linear-gradient(#eff6ff, #eff6ff), linear-gradient(135deg, #3B82F6, #8B5CF6);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .role-card-admin {
+            border: 2px solid transparent;
+            background-image: linear-gradient(white, white), linear-gradient(135deg, #475569, #1e293b);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .role-card-admin:hover {
+            background-image: linear-gradient(#f8fafc, #f8fafc), linear-gradient(135deg, #475569, #1e293b);
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.25);
+            transform: translateY(-2px);
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="#home" class="flex items-center group">
+                    <div
+                        class="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center mr-3 group-hover:bg-secondary transition">
+                        <i class="fas fa-seedling text-xl"></i>
+                    </div>
+                    <div>
+                        <span
+                            class="font-bold text-xl tracking-tight text-gray-900 leading-tight block">FoodShare</span>
+                        <span class="text-xs text-primary font-semibold tracking-widest uppercase">Connect</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-6 items-center" id="nav-links">
+                    <!-- Links injected by JS based on auth state -->
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()"
+                    class="md:hidden text-gray-500 hover:text-primary focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-xl" id="mobile-menu">
+            <div class="px-4 pt-2 pb-4 space-y-2" id="mobile-nav-links">
+                <!-- Links injected by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="app-container" class="flex-grow">
+        <!-- Pages will be dynamically rendered here -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-leaf text-primary text-2xl mr-2"></i>
+                        <span class="font-bold text-xl">FoodShare Connect</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+                        A centralized platform connecting food donors with NGOs to reduce waste and fight hunger.
+                        Developed by students of LMC Engineering College.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-primary mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#home" class="hover:text-white transition">Home</a></li>
+                        <li><a href="#about" class="hover:text-white transition">About Project</a></li>
+                        <li><a href="#contact" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#register" class="hover:text-white transition">Join as Donor</a></li>
+                        <li><a href="#register" class="hover:text-white transition">Join as NGO</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-primary mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><i class="fas fa-map-marker-alt w-5"></i> LMC Engineering College</li>
+                        <li><i class="fas fa-envelope w-5"></i> help@foodshare.org</li>
+                        <li><i class="fas fa-phone w-5"></i> +91 98765 43210</li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 Food Waste Management System.</p>
+                <div class="mt-2 md:mt-0">
+                    Project Guide: Nisha O.S (Dept CSE)
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- QUANTITY REQUEST MODAL -->
+    <div id="qty-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeQtyModal()"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl w-full max-w-md p-0 overflow-hidden">
+            <div class="bg-primary p-5 text-white">
+                <h3 class="text-lg font-bold"><i class="fas fa-hand-holding-heart mr-2"></i>Request Food</h3>
+                <p class="text-sm opacity-90 mt-1" id="qty-modal-food-name"></p>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700">Available Quantity</label>
+                        <span class="text-sm font-bold text-primary" id="qty-modal-available"></span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2 mb-4">
+                        <div class="bg-primary h-2 rounded-full" id="qty-bar" style="width:100%"></div>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">How many do you need?</label>
+                    <div class="flex items-center gap-3">
+                        <button onclick="adjustQty(-1)"
+                            class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center transition">−</button>
+                        <input type="number" id="qty-input" min="1"
+                            class="w-24 text-center text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2 focus:border-primary focus:ring-2 focus:ring-green-200 outline-none transition"
+                            value="1">
+                        <button onclick="adjustQty(1)"
+                            class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center transition">+</button>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2" id="qty-modal-hint">Maximum allowed: <span id="qty-modal-max"
+                            class="font-bold text-gray-600"></span></p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeQtyModal()"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Cancel</button>
+                    <button onclick="confirmQtyRequest()"
+                        class="flex-1 bg-primary hover:bg-secondary text-white font-bold py-3 rounded-xl transition shadow-md"><i
+                            class="fas fa-check mr-1"></i>Confirm Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // --- 1. INITIALIZATION & STATE ---
+
+        const defaultDonations = [
+            {
+                id: 1,
+                donorName: "Grand Hotel",
+                foodType: "Cooked Meals (Rice & Curry)",
+                quantity: "20 Servings",
+                location: "MG Road, Downtown",
+                expiry: "Today, 10:00 PM",
+                status: "Available",
+                image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&q=80&w=400",
+                timestamp: Date.now()
+            },
+            {
+                id: 2,
+                donorName: "City Bakery",
+                foodType: "Bread & Pastries",
+                quantity: "5 kg",
+                location: "Westside Avenue",
+                expiry: "Tomorrow, 9:00 AM",
+                status: "Available",
+                image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=400",
+                timestamp: Date.now() - 3600000
+            },
+            {
+                id: 3,
+                donorName: "Wedding Event",
+                foodType: "Buffet Leftovers",
+                quantity: "50 Servings",
+                location: "Community Hall",
+                expiry: "Today, 11:00 PM",
+                status: "Claimed",
+                claimedBy: "City Orphanage",
+                image: "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=400",
+                timestamp: Date.now() - 7200000
+            }
+        ];
+
+        const App = {
+            data: {
+                user: JSON.parse(localStorage.getItem('fwm_user')) || null,
+                donations: JSON.parse(localStorage.getItem('fwm_donations')) || defaultDonations
+            },
+
+            saveData() {
+                localStorage.setItem('fwm_user', JSON.stringify(this.data.user));
+                localStorage.setItem('fwm_donations', JSON.stringify(this.data.donations));
+            },
+
+            login(name, role) {
+                this.data.user = { name, role, id: Date.now() };
+                this.saveData();
+                window.location.hash = '#dashboard';
+            },
+
+            logout() {
+                this.data.user = null;
+                this.saveData();
+                window.location.hash = '#home';
+            },
+
+            addDonation(donation) {
+                this.data.donations.unshift(donation);
+                this.saveData();
+            },
+
+            deleteDonation(id) {
+                this.data.donations = this.data.donations.filter(d => d.id !== id);
+                this.saveData();
+                render();
+            },
+
+            // Receiver requests/books a donation (2-hour window) with quantity
+            requestDonation(id, receiverName, requestedQty) {
+                const donation = this.data.donations.find(d => d.id === id);
+                if (donation && donation.status === 'Available') {
+                    donation.status = 'Requested';
+                    donation.requestedBy = receiverName;
+                    donation.requestedQty = requestedQty || donation.quantity;
+                    donation.bookedAt = Date.now();
+                    donation.bookedUntil = Date.now() + (2 * 60 * 60 * 1000); // 2 hours
+                    this.saveData();
+                    render();
+                }
+            },
+
+            // Donor confirms the food has been handed over
+            confirmClaim(id) {
+                const donation = this.data.donations.find(d => d.id === id);
+                if (donation && donation.status === 'Requested') {
+                    donation.status = 'Claimed';
+                    donation.claimedAt = Date.now();
+                    this.saveData();
+                    render();
+                }
+            },
+
+            // Cancel a booking (receiver or auto-expiry)
+            cancelBooking(id) {
+                const donation = this.data.donations.find(d => d.id === id);
+                if (donation && donation.status === 'Requested') {
+                    donation.status = 'Available';
+                    delete donation.requestedBy;
+                    delete donation.bookedAt;
+                    delete donation.bookedUntil;
+                    this.saveData();
+                    render();
+                }
+            },
+
+            // Check and expire overdue bookings
+            checkExpiredBookings() {
+                let changed = false;
+                this.data.donations.forEach(d => {
+                    if (d.status === 'Requested' && d.bookedUntil && Date.now() > d.bookedUntil) {
+                        d.status = 'Available';
+                        delete d.requestedBy;
+                        delete d.bookedAt;
+                        delete d.bookedUntil;
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    this.saveData();
+                    render();
+                }
+            }
+        };
+
+        // --- 2. ROUTING ENGINE ---
+
+        window.addEventListener('hashchange', render);
+        window.addEventListener('load', render);
+
+        function render() {
+            const hash = window.location.hash || '#home';
+            const appContainer = document.getElementById('app-container');
+
+            window.scrollTo(0, 0);
+            updateNavbar();
+
+            if (hash === '#home') {
+                appContainer.innerHTML = Pages.home();
+            } else if (hash === '#about') {
+                appContainer.innerHTML = Pages.about();
+            } else if (hash === '#contact') {
+                appContainer.innerHTML = Pages.contact();
+            } else if (hash === '#login') {
+                appContainer.innerHTML = Pages.login();
+            } else if (hash === '#register') {
+                appContainer.innerHTML = Pages.register();
+            } else if (hash === '#dashboard') {
+                if (!App.data.user) { window.location.hash = '#login'; return; }
+                if (App.data.user.role === 'admin') appContainer.innerHTML = Pages.adminDashboard();
+                else if (App.data.user.role === 'donor') appContainer.innerHTML = Pages.donorDashboard();
+                else appContainer.innerHTML = Pages.receiverDashboard();
+            } else if (hash === '#donate') {
+                if (!App.data.user) { window.location.hash = '#login'; return; }
+                appContainer.innerHTML = Pages.donate();
+            } else {
+                appContainer.innerHTML = Pages.home();
+            }
+
+            if (hash === '#dashboard' && App.data.user?.role === 'admin') {
+                initAdminCharts();
+            }
+        }
+
+        // --- 3. PAGE TEMPLATES ---
+
+        const Pages = {
+            home: () => `
+                <div class="page-enter">
+                    <section class="hero-bg text-white py-32 relative">
+                        <div class="container mx-auto px-4 text-center relative z-10">
+                            <span class="bg-primary bg-opacity-90 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block">Save Food, Save Lives</span>
+                            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Turn Excess Food into <br/><span class="text-primary">Social Impact</span></h1>
+                            <p class="text-lg md:text-xl mb-10 text-gray-200 max-w-2xl mx-auto">A tech-driven solution connecting hotels and restaurants with NGOs to ensure surplus food reaches the hungry, not the landfill.</p>
+                            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                                <a href="#register" class="bg-primary hover:bg-secondary text-white font-bold py-4 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">Start Donating</a>
+                                <a href="#about" class="bg-white hover:bg-gray-100 text-gray-900 font-bold py-4 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">How It Works</a>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="py-20 bg-white">
+                        <div class="container mx-auto px-4">
+                            <div class="text-center mb-16"><h2 class="text-3xl font-bold text-gray-900">Why Use Our Platform?</h2><p class="text-gray-500 mt-2">Bridging the gap between abundance and scarcity.</p></div>
+                            <div class="grid md:grid-cols-3 gap-10">
+                                <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6 text-primary"><i class="fas fa-clock text-2xl"></i></div>
+                                    <h3 class="text-xl font-bold mb-3">Real-Time Updates</h3><p class="text-gray-600">Donors post food, and NGOs get instant visibility. No more delays, ensuring food is consumed while fresh.</p>
+                                </div>
+                                <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-blue-600"><i class="fas fa-map-marked-alt text-2xl"></i></div>
+                                    <h3 class="text-xl font-bold mb-3">Location Based</h3><p class="text-gray-600">Integrated mapping allows receivers to find the nearest food sources, minimizing travel time and cost.</p>
+                                </div>
+                                <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6 text-purple-600"><i class="fas fa-chart-line text-2xl"></i></div>
+                                    <h3 class="text-xl font-bold mb-3">Impact Tracking</h3><p class="text-gray-600">Admins and donors can track the amount of food saved, creating accountability and social credit.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="py-16 bg-primary">
+                        <div class="container mx-auto px-4 text-center text-white">
+                            <h2 class="text-3xl font-bold mb-4">Ready to make a difference?</h2>
+                            <p class="mb-8 opacity-90">Join hundreds of donors and volunteers in the fight against hunger.</p>
+                            <a href="#login" class="inline-block bg-white text-primary font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition">Login Now</a>
+                        </div>
+                    </section>
+                </div>
+            `,
+
+            about: () => `
+                <div class="container mx-auto px-4 py-16 page-enter">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="text-center mb-12"><h1 class="text-4xl font-bold text-gray-900 mb-4">About The Project</h1><div class="h-1 w-20 bg-primary mx-auto rounded"></div></div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-10">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">The Problem</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6">Food wastage is a major social and environmental problem. Large quantities of edible food are discarded daily by hotels, restaurants, and events, while many people suffer from food insecurity. Traditional donation methods are manual, unorganized, and inefficient.</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Solution</h3>
+                            <p class="text-gray-600 leading-relaxed">The <strong>Food Waste Management System</strong> automates this process. It serves as a centralized bridge connecting donors with receivers. By leveraging geolocation and real-time data, we ensure surplus food reaches those in need before it spoils.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <h4 class="font-bold text-lg mb-4 text-primary">Key Objectives</h4>
+                                <ul class="space-y-3 text-gray-600">
+                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> Reduce food wastage digitally.</li>
+                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> Facilitate efficient donation posting.</li>
+                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> Help NGOs locate food nearby.</li>
+                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> Automate waste management.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                <h4 class="font-bold text-lg mb-4 text-primary">Project Team</h4>
+                                <ul class="space-y-3 text-gray-700">
+                                    <li><strong>Abhijith Mathews</strong> (LMC23CS006)</li>
+                                    <li><strong>Br Abhinand</strong> (LMC23CS058)</li>
+                                    <li><strong>Madhav Sekhar J</strong> (LMC23CS083)</li>
+                                    <li><strong>Praveenkumar P J</strong> (LMC23CS096)</li>
+                                    <li class="mt-4 pt-4 border-t text-sm text-gray-500">Guided by: <strong>Nisha O.S</strong> (Dept CSE)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            contact: () => `
+                <div class="container mx-auto px-4 py-16 page-enter">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="text-center mb-12">
+                            <h1 class="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
+                            <p class="text-gray-500">We would love to hear from you</p>
+                            <div class="h-1 w-20 bg-primary mx-auto rounded mt-4"></div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-8 mb-10">
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-primary"><i class="fas fa-map-marker-alt"></i></div>
+                                <h3 class="font-bold text-gray-900 mb-1">Visit Us</h3>
+                                <p class="text-sm text-gray-500">LMC Engineering College</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500"><i class="fas fa-envelope"></i></div>
+                                <h3 class="font-bold text-gray-900 mb-1">Email Us</h3>
+                                <p class="text-sm text-gray-500">help@foodshare.org</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-500"><i class="fas fa-phone"></i></div>
+                                <h3 class="font-bold text-gray-900 mb-1">Call Us</h3>
+                                <p class="text-sm text-gray-500">+91 98765 43210</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                            <div class="bg-primary p-6 text-white text-center">
+                                <h3 class="text-xl font-bold">Send a Message</h3>
+                            </div>
+                            <form class="p-8 space-y-6" onsubmit="event.preventDefault(); alert('Message sent!');">
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
+                                        <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                    <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" required></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 rounded-lg shadow-md transition">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            login: () => `
+                <div class="login-bg min-h-[80vh] flex items-center justify-center px-4 page-enter relative overflow-hidden">
+                    <!-- Floating Decorative Elements -->
+                    <div class="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl login-float"></div>
+                    <div class="absolute bottom-20 right-16 w-40 h-40 bg-yellow-300/15 rounded-full blur-2xl login-float-delay"></div>
+                    <div class="absolute top-1/3 right-10 w-20 h-20 bg-pink-300/20 rounded-full blur-lg login-float"></div>
+                    <div class="absolute bottom-10 left-1/4 w-24 h-24 bg-blue-300/15 rounded-full blur-xl login-float-delay"></div>
+                    <div class="absolute top-16 right-1/3 w-16 h-16 bg-emerald-300/20 rounded-full blur-lg login-float"></div>
+
+                    <!-- Sparkle Icons -->
+                    <div class="absolute top-20 left-1/4 text-white/20 text-2xl" style="animation: sparkle 3s ease infinite;"><i class="fas fa-star"></i></div>
+                    <div class="absolute bottom-32 right-1/4 text-white/15 text-xl" style="animation: sparkle 4s ease 1s infinite;"><i class="fas fa-heart"></i></div>
+                    <div class="absolute top-1/2 left-12 text-white/15 text-lg" style="animation: sparkle 3.5s ease 0.5s infinite;"><i class="fas fa-seedling"></i></div>
+
+                    <!-- Login Card -->
+                    <div class="login-card p-8 rounded-3xl shadow-2xl w-full max-w-md relative z-10">
+                        <!-- Header with Gradient Icon -->
+                        <div class="text-center mb-8">
+                            <div class="w-20 h-20 mx-auto mb-5 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #10B981, #3B82F6);">
+                                <i class="fas fa-leaf text-white text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold bg-clip-text text-transparent" style="background-image: linear-gradient(135deg, #064E3B, #10B981, #3B82F6);">Welcome Back</h2>
+                            <p class="text-gray-400 mt-2 text-sm">Choose your role to get started</p>
+                        </div>
+
+                        <!-- Role Cards -->
+                        <div class="space-y-4">
+                            <button onclick="App.login('Grand Hotel', 'donor')" class="w-full group relative flex items-center p-4 role-card-donor rounded-2xl transition-all duration-300 cursor-pointer text-left">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center mr-4 shadow-md transition-all duration-300" style="background: linear-gradient(135deg, #10B981, #059669);">
+                                    <i class="fas fa-utensils text-white text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-gray-900 text-base">Food Donor</h3>
+                                    <p class="text-xs text-gray-400 mt-0.5">Hotel, Restaurant, or Individual</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-green-50 group-hover:bg-green-500 flex items-center justify-center transition-all duration-300">
+                                    <i class="fas fa-arrow-right text-green-500 group-hover:text-white text-sm transition"></i>
+                                </div>
+                            </button>
+
+                            <button onclick="App.login('Hope NGO', 'receiver')" class="w-full group relative flex items-center p-4 role-card-receiver rounded-2xl transition-all duration-300 cursor-pointer text-left">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center mr-4 shadow-md transition-all duration-300" style="background: linear-gradient(135deg, #3B82F6, #8B5CF6);">
+                                    <i class="fas fa-hand-holding-heart text-white text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-gray-900 text-base">Receiver</h3>
+                                    <p class="text-xs text-gray-400 mt-0.5">NGO, Charity, or Volunteer</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-blue-50 group-hover:bg-blue-500 flex items-center justify-center transition-all duration-300">
+                                    <i class="fas fa-arrow-right text-blue-500 group-hover:text-white text-sm transition"></i>
+                                </div>
+                            </button>
+
+                            <button onclick="App.login('Admin User', 'admin')" class="w-full group relative flex items-center p-4 role-card-admin rounded-2xl transition-all duration-300 cursor-pointer text-left">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center mr-4 shadow-md transition-all duration-300" style="background: linear-gradient(135deg, #475569, #1e293b);">
+                                    <i class="fas fa-user-shield text-white text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-gray-900 text-base">Administrator</h3>
+                                    <p class="text-xs text-gray-400 mt-0.5">System Management</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-gray-800 flex items-center justify-center transition-all duration-300">
+                                    <i class="fas fa-arrow-right text-gray-500 group-hover:text-white text-sm transition"></i>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="mt-8 text-center pt-6 border-t border-gray-100">
+                            <p class="text-gray-500 text-sm">New to the platform? <a href="#register" class="font-bold bg-clip-text text-transparent hover:underline" style="background-image: linear-gradient(135deg, #10B981, #3B82F6);">Create an account</a></p>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            register: () => `
+                <div class="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4 page-enter">
+                    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                        <div class="text-center mb-8">
+                            <h2 class="text-2xl font-bold text-gray-900">Create Account</h2>
+                            <p class="text-gray-500 mt-1">Join the community</p>
+                        </div>
+                        <form onsubmit="event.preventDefault(); alert('Registration Successful! Please login.'); window.location.hash='#login';">
+                            <div class="space-y-4">
+                                <div><label class="block text-sm font-medium text-gray-700 mb-1">Organization / Name</label><input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="e.g. City Hotel" required></div>
+                                <div><label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label><input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="name@example.com" required></div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none bg-white"><option value="donor">Donor (Hotel/Restaurant)</option><option value="receiver">Receiver (NGO/Charity)</option></select>
+                                </div>
+                                <div><label class="block text-sm font-medium text-gray-700 mb-1">Password</label><input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="••••••••" required></div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-3 rounded-lg mt-6 transition shadow-md">Sign Up</button>
+                        </form>
+                        <div class="mt-6 text-center"><p class="text-gray-600 text-sm">Already have an account? <a href="#login" class="text-primary font-bold hover:underline">Login</a></p></div>
+                    </div>
+                </div>
+            `,
+
+            donorDashboard: () => {
+                const myDonations = App.data.donations.filter(d => d.donorName === App.data.user.name);
+                const pendingRequests = myDonations.filter(d => d.status === 'Requested');
+
+                function getStatusBadge(d) {
+                    if (d.status === 'Available') return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-circle text-[6px] mr-1.5"></i>Available</span>';
+                    if (d.status === 'Requested') return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 timer-pulse"><i class="fas fa-hourglass-half text-[10px] mr-1.5"></i>Requested</span>';
+                    if (d.status === 'Claimed') return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><i class="fas fa-check text-[10px] mr-1.5"></i>Claimed</span>';
+                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">${d.status}</span>`;
+                }
+
+                function getActionButtons(d) {
+                    if (d.status === 'Requested') {
+                        return `<button onclick="App.confirmClaim(${d.id})" class="bg-primary hover:bg-secondary text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-sm mr-2"><i class="fas fa-check-circle mr-1"></i>Mark Claimed</button><button onclick="App.deleteDonation(${d.id})" class="text-red-400 hover:text-red-600 transition" title="Delete"><i class="fas fa-trash-alt"></i></button>`;
+                    }
+                    return `<button onclick="App.deleteDonation(${d.id})" class="text-red-400 hover:text-red-600 transition" title="Delete"><i class="fas fa-trash-alt"></i></button>`;
+                }
+
+                return `
+                <div class="container mx-auto px-4 py-8 page-enter">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div><h2 class="text-2xl font-bold text-gray-800">Donor Dashboard</h2><p class="text-gray-500">Welcome back, <span class="text-primary font-semibold">${App.data.user.name}</span></p></div>
+                        <a href="#donate" class="mt-4 md:mt-0 bg-primary hover:bg-secondary text-white px-6 py-3 rounded-full shadow-lg transition flex items-center"><i class="fas fa-plus-circle mr-2"></i> Post New Donation</a>
+                    </div>
+
+                    ${pendingRequests.length > 0 ? `
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-gray-700 mb-4 px-2 flex items-center"><i class="fas fa-bell text-amber-500 mr-2"></i>Pending Pickup Requests <span class="ml-2 bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">${pendingRequests.length}</span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${pendingRequests.map(d => {
+                    const remaining = d.bookedUntil - Date.now();
+                    const mins = Math.max(0, Math.floor(remaining / 60000));
+                    const hrs = Math.floor(mins / 60);
+                    const m = mins % 60;
+                    const timeStr = hrs > 0 ? hrs + 'h ' + m + 'm remaining' : m + 'm remaining';
+                    return `
+                                <div class="booking-card bg-white rounded-xl shadow-sm border border-amber-200 p-5 hover:shadow-md transition">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-bold text-gray-900">${d.foodType}</h4>
+                                            <p class="text-sm text-gray-500">Total: ${d.quantity} &bull; Requested: <strong class="text-amber-700">${d.requestedQty || d.quantity}</strong></p>
+                                            <p class="text-sm text-gray-400">${d.location}</p>
+                                        </div>
+                                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full timer-pulse" data-booking-timer="${d.id}"><i class="fas fa-clock mr-1"></i>${timeStr}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                                        <div class="flex items-center text-sm text-gray-600"><i class="fas fa-hand-holding-heart text-blue-500 mr-2"></i>Requested by: <strong class="ml-1 text-gray-800">${d.requestedBy}</strong></div>
+                                        <button onclick="App.confirmClaim(${d.id})" class="bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2 rounded-lg transition shadow-sm flex items-center"><i class="fas fa-check-circle mr-1.5"></i>Mark as Claimed</button>
+                                    </div>
+                                </div>`;
+                }).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    <h3 class="text-lg font-bold text-gray-700 mb-4 px-2">Your Donation History</h3>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50"><tr><th class="p-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">Food Item</th><th class="p-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">Qty</th><th class="p-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">Location</th><th class="p-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">Status</th><th class="p-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">Requested By</th><th class="p-4 text-xs font-semibold tracking-wide text-gray-500 uppercase text-right">Actions</th></tr></thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    ${myDonations.length > 0 ? myDonations.map(d => `
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="p-4 font-medium text-gray-900">${d.foodType}</td>
+                                            <td class="p-4 text-gray-600">${d.quantity}</td>
+                                            <td class="p-4 text-gray-600"><span class="truncate block max-w-xs">${d.location}</span></td>
+                                            <td class="p-4">${getStatusBadge(d)}</td>
+                                            <td class="p-4 text-gray-600">${d.requestedBy || '-'}</td>
+                                            <td class="p-4 text-right">${getActionButtons(d)}</td>
+                                        </tr>
+                                    `).join('') : `<tr><td colspan="6" class="p-8 text-center text-gray-500">You haven't posted any donations yet.</td></tr>`}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`;
+            },
+
+            donate: () => `
+                <div class="container mx-auto px-4 py-8 page-enter">
+                    <div class="max-w-2xl mx-auto">
+                        <button onclick="window.history.back()" class="mb-4 text-gray-500 hover:text-primary flex items-center text-sm font-medium transition"><i class="fas fa-arrow-left mr-2"></i> Back to Dashboard</button>
+                        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                            <div class="bg-primary p-6 text-white"><h2 class="text-2xl font-bold">Donate Food</h2><p class="opacity-90 text-sm mt-1">Share your surplus food with those in need.</p></div>
+                            <form onsubmit="handleDonationSubmit(event)" class="p-8 space-y-6">
+                                <div><label class="block text-sm font-medium text-gray-700 mb-1">Food Description</label><input name="foodType" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" placeholder="e.g. Leftover Wedding Buffet - Rice & Curry" required></div>
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label><input name="quantity" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" placeholder="e.g. 50 Servings" required></div>
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Expires In</label><input name="expiry" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" placeholder="e.g. 4 Hours" required></div>
+                                </div>
+                                <div><label class="block text-sm font-medium text-gray-700 mb-1">Pickup Address</label><textarea name="location" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none transition" placeholder="Enter full address for pickup..." required></textarea></div>
+                                <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-4 rounded-lg shadow-md transition transform active:scale-95">Post Donation</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            receiverDashboard: () => {
+                const availableFood = App.data.donations.filter(d => d.status === 'Available');
+                const myBookings = App.data.donations.filter(d => d.status === 'Requested' && d.requestedBy === App.data.user.name);
+                const myClaimedItems = App.data.donations.filter(d => d.status === 'Claimed' && d.requestedBy === App.data.user.name);
+
+                return `
+                <div class="container mx-auto px-4 py-8 page-enter">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800">Receiver Dashboard</h2>
+                        <p class="text-gray-500">Welcome back, <span class="text-primary font-semibold">${App.data.user.name}</span></p>
+                    </div>
+
+                    ${myBookings.length > 0 ? `
+                    <div class="mb-10">
+                        <h3 class="text-lg font-bold text-gray-700 mb-4 px-2 flex items-center"><i class="fas fa-bookmark text-amber-500 mr-2"></i>My Active Bookings <span class="ml-2 bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">${myBookings.length}</span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${myBookings.map(item => {
+                    const remaining = item.bookedUntil - Date.now();
+                    const totalMins = Math.max(0, Math.floor(remaining / 60000));
+                    const hrs = Math.floor(totalMins / 60);
+                    const mins = totalMins % 60;
+                    const secs = Math.max(0, Math.floor((remaining % 60000) / 1000));
+                    const timeStr = hrs > 0 ? hrs + 'h ' + mins + 'm ' + secs + 's' : mins + 'm ' + secs + 's';
+                    const urgencyClass = totalMins < 30 ? 'text-red-600 bg-red-100' : 'text-amber-700 bg-amber-100';
+                    return `
+                                <div class="booking-card bg-white rounded-xl shadow-sm border border-amber-200 p-5 hover:shadow-md transition">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-bold text-gray-900 text-lg">${item.foodType}</h4>
+                                            <p class="text-sm text-gray-500 mt-1"><i class="fas fa-user mr-1"></i>Donor: ${item.donorName}</p>
+                                        </div>
+                                        <span class="${urgencyClass} text-xs font-bold px-3 py-1.5 rounded-full timer-pulse" data-booking-timer="${item.id}"><i class="fas fa-hourglass-half mr-1"></i>${timeStr}</span>
+                                    </div>
+                                    <div class="space-y-1.5 mb-4">
+                                        <p class="text-sm text-gray-500"><i class="fas fa-map-marker-alt mr-1.5 text-primary"></i>${item.location}</p>
+                                        <p class="text-sm text-gray-500"><i class="fas fa-box mr-1.5 text-primary"></i>Requested: <strong class="text-gray-700">${item.requestedQty || item.quantity}</strong> of ${item.quantity}</p>
+                                        <p class="text-sm text-gray-500"><i class="fas fa-clock mr-1.5 text-primary"></i>Expires: ${item.expiry}</p>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                                        <span class="text-xs text-amber-600 font-medium"><i class="fas fa-info-circle mr-1"></i>Waiting for donor to confirm pickup</span>
+                                        <button onclick="App.cancelBooking(${item.id})" class="text-red-500 hover:text-red-700 text-sm font-medium transition"><i class="fas fa-times mr-1"></i>Cancel</button>
+                                    </div>
+                                </div>`;
+                }).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${myClaimedItems.length > 0 ? `
+                    <div class="mb-10">
+                        <h3 class="text-lg font-bold text-gray-700 mb-4 px-2 flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i>Successfully Received</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${myClaimedItems.map(item => `
+                                <div class="claimed-card bg-white rounded-xl shadow-sm border border-green-200 p-5">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h4 class="font-bold text-gray-900">${item.foodType}</h4>
+                                            <p class="text-sm text-gray-500">${item.quantity} &bull; from ${item.donorName}</p>
+                                        </div>
+                                        <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full"><i class="fas fa-check mr-1"></i>Received</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold text-gray-700 mb-1 px-2">Available Donations</h3>
+                        <p class="text-gray-500 text-sm px-2 mb-4">Find food near <span class="text-primary font-semibold">Current Location</span></p>
+                        <div class="relative max-w-lg mb-6"><input type="text" placeholder="Search by location or food type..." class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"><i class="fas fa-search absolute left-4 top-3.5 text-gray-400"></i></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${availableFood.length > 0 ? availableFood.map(item => `
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition duration-300 group">
+                                <div class="h-48 bg-gray-200 relative overflow-hidden">
+                                    <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Food">
+                                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-red-500 shadow-sm"><i class="fas fa-clock mr-1"></i> ${item.expiry}</div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">${item.foodType}</h3>
+                                    <div class="space-y-2 mb-6">
+                                        <div class="flex items-start text-gray-500 text-sm"><i class="fas fa-map-marker-alt mt-1 mr-2 text-primary w-4"></i><span>${item.location}</span></div>
+                                        <div class="flex items-center text-gray-500 text-sm"><i class="fas fa-box mt-0.5 mr-2 text-primary w-4"></i><span>Qty: ${item.quantity}</span></div>
+                                        <div class="flex items-center text-gray-500 text-sm"><i class="fas fa-user mt-0.5 mr-2 text-primary w-4"></i><span>Donor: ${item.donorName}</span></div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}" target="_blank" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-lg text-center transition text-sm flex items-center justify-center"><i class="fas fa-map mr-2"></i> Map</a>
+                                        <button onclick="openQtyModal(${item.id}, '${item.foodType.replace(/'/g, "\\'")}', '${item.quantity}')" class="flex-1 bg-primary hover:bg-secondary text-white font-bold py-2 rounded-lg transition text-sm"><i class="fas fa-hand-holding-heart mr-1"></i>Request</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') : `<div class="col-span-full py-12 text-center"><div class="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 text-gray-300"><i class="fas fa-utensils text-3xl"></i></div><p class="text-gray-500">No available food donations at the moment.</p></div>`}
+                    </div>
+                </div>`;
+            },
+
+            adminDashboard: () => {
+                const totalDonations = App.data.donations.length;
+                const available = App.data.donations.filter(d => d.status === 'Available').length;
+                const requested = App.data.donations.filter(d => d.status === 'Requested').length;
+                const claimed = App.data.donations.filter(d => d.status === 'Claimed').length;
+                const wasted = App.data.donations.filter(d => d.status === 'Wasted' || d.status === 'Expired').length;
+
+                function getAdminStatusBadge(status) {
+                    if (status === 'Available') return '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-circle text-[6px] mr-1"></i>Available</span>';
+                    if (status === 'Requested') return '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"><i class="fas fa-hourglass-half text-[10px] mr-1"></i>Requested</span>';
+                    if (status === 'Claimed') return '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><i class="fas fa-check text-[10px] mr-1"></i>Claimed</span>';
+                    if (status === 'Wasted' || status === 'Expired') return '<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times text-[10px] mr-1"></i>Wasted</span>';
+                    return `<span class="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">${status}</span>`;
+                }
+
+                return `
+                <div class="container mx-auto px-4 py-8 page-enter">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Admin Overview</h2>
+
+                    <!-- Stat Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center mb-3"><div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fas fa-clipboard-list"></i></div></div>
+                            <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Total</p>
+                            <p class="text-2xl font-bold text-gray-900">${totalDonations}</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center mb-3"><div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fas fa-box-open"></i></div></div>
+                            <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Available</p>
+                            <p class="text-2xl font-bold text-green-600">${available}</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center mb-3"><div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center"><i class="fas fa-hourglass-half"></i></div></div>
+                            <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Requested</p>
+                            <p class="text-2xl font-bold text-amber-600">${requested}</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center mb-3"><div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><i class="fas fa-check-circle"></i></div></div>
+                            <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Claimed</p>
+                            <p class="text-2xl font-bold text-emerald-600">${claimed}</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center mb-3"><div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center"><i class="fas fa-trash-alt"></i></div></div>
+                            <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Wasted</p>
+                            <p class="text-2xl font-bold text-red-600">${wasted}</p>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="grid md:grid-cols-3 gap-8 mb-8">
+                        <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-gray-800">Monthly Report: Claimed vs Wasted</h3>
+                                <span class="text-xs text-gray-400">Last 6 Months</span>
+                            </div>
+                            <div style="height: 280px;"><canvas id="monthlyBarChart"></canvas></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-gray-800 mb-4">Current Status Breakdown</h3>
+                            <div style="height: 280px;"><canvas id="statusDoughnutChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- System Activity -->
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-gray-800 mb-4">System Activity</h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-center text-sm text-gray-600"><span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span> New user "Spice Garden" registered as Donor.</li>
+                                <li class="flex items-center text-sm text-gray-600"><span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span> NGO "Helping Hands" claimed Donation #3.</li>
+                                <li class="flex items-center text-sm text-gray-600"><span class="w-2 h-2 bg-amber-500 rounded-full mr-3"></span> 2 bookings expired and marked as wasted.</li>
+                                <li class="flex items-center text-sm text-gray-600"><span class="w-2 h-2 bg-gray-300 rounded-full mr-3"></span> System backup completed successfully.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-gray-800 mb-4">Impact Summary</h3>
+                            <div class="space-y-4">
+                                <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Food Saved Rate</span><span class="font-bold text-green-600">${totalDonations > 0 ? Math.round((claimed / Math.max(claimed + wasted, 1)) * 100) : 0}%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full" style="width: ${totalDonations > 0 ? Math.round((claimed / Math.max(claimed + wasted, 1)) * 100) : 0}%"></div></div></div>
+                                <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Waste Rate</span><span class="font-bold text-red-500">${totalDonations > 0 ? Math.round((wasted / Math.max(claimed + wasted, 1)) * 100) : 0}%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: ${totalDonations > 0 ? Math.round((wasted / Math.max(claimed + wasted, 1)) * 100) : 0}%"></div></div></div>
+                                <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Active Request Rate</span><span class="font-bold text-amber-500">${totalDonations > 0 ? Math.round((requested / totalDonations) * 100) : 0}%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-amber-500 h-2 rounded-full" style="width: ${totalDonations > 0 ? Math.round((requested / totalDonations) * 100) : 0}%"></div></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All Food Listings -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-100"><h3 class="font-bold text-gray-800">All Food Listings</h3></div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-gray-50"><tr><th class="px-6 py-3 font-semibold text-gray-500">ID</th><th class="px-6 py-3 font-semibold text-gray-500">Donor</th><th class="px-6 py-3 font-semibold text-gray-500">Food</th><th class="px-6 py-3 font-semibold text-gray-500">Qty</th><th class="px-6 py-3 font-semibold text-gray-500">Status</th><th class="px-6 py-3 font-semibold text-gray-500">Requested By</th><th class="px-6 py-3 font-semibold text-gray-500 text-right">Action</th></tr></thead>
+                                <tbody class="divide-y divide-gray-100">${App.data.donations.map(d => `<tr class="hover:bg-gray-50 transition"><td class="px-6 py-3 text-gray-500">#${d.id}</td><td class="px-6 py-3 font-medium text-gray-900">${d.donorName}</td><td class="px-6 py-3 text-gray-600">${d.foodType}</td><td class="px-6 py-3 text-gray-600">${d.quantity}</td><td class="px-6 py-3">${getAdminStatusBadge(d.status)}</td><td class="px-6 py-3 text-gray-600">${d.requestedBy || '-'}</td><td class="px-6 py-3 text-right"><button onclick="App.deleteDonation(${d.id})" class="text-red-500 hover:text-red-700 font-medium">Remove</button></td></tr>`).join('')}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`;
+            }
+        };
+
+        // --- 4. HELPER FUNCTIONS ---
+
+        function updateNavbar() {
+            const navLinks = document.getElementById('nav-links');
+            const mobileNavLinks = document.getElementById('mobile-nav-links');
+            const user = App.data.user;
+
+            let linksHtml = '';
+
+            // Common Links
+            const activeClass = (path) => window.location.hash === path ? 'text-primary font-bold' : 'text-gray-500 hover:text-primary';
+
+            linksHtml += `<a href="#home" class="${activeClass('#home')} transition">Home</a>`;
+            linksHtml += `<a href="#about" class="${activeClass('#about')} transition">About</a>`;
+            linksHtml += `<a href="#contact" class="${activeClass('#contact')} transition">Contact</a>`;
+
+            if (user) {
+                // Logged In
+                linksHtml += `<a href="#dashboard" class="${activeClass('#dashboard')} transition">Dashboard</a>`;
+                if (user.role === 'donor') {
+                    linksHtml += `<a href="#donate" class="${activeClass('#donate')} transition">Donate</a>`;
+                } else if (user.role === 'receiver') {
+                    linksHtml += `<a href="#dashboard" class="${activeClass('#dashboard')} text-primary transition">Find Food</a>`;
+                }
+
+                // Desktop Button
+                const desktopBtn = `<button onclick="App.logout()" class="ml-4 bg-gray-100 hover:bg-gray-200 text-gray-800 px-5 py-2 rounded-full transition font-medium text-sm">Logout <span class="text-xs text-gray-500 ml-1">(${user.name})</span></button>`;
+
+                // Mobile Link
+                const mobileBtn = `<button onclick="App.logout()" class="w-full text-left text-red-500 font-medium py-2">Logout</button>`;
+
+                // Inject
+                navLinks.innerHTML = linksHtml + desktopBtn;
+                mobileNavLinks.innerHTML = linksHtml.replace(/<a /g, '<a class="block py-2 text-base font-medium text-gray-600 hover:bg-gray-50 rounded-lg px-2" ') + mobileBtn;
+
+            } else {
+                // Logged Out
+                const loginBtn = `<a href="#login" class="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-full transition shadow-md transform hover:-translate-y-0.5 ml-4">Login</a>`;
+                const joinBtn = `<a href="#register" class="text-primary hover:text-secondary font-medium transition ml-4">Join Us</a>`;
+
+                navLinks.innerHTML = linksHtml + joinBtn + loginBtn;
+                mobileNavLinks.innerHTML = linksHtml.replace(/<a /g, '<a class="block py-2 text-base font-medium text-gray-600 hover:bg-gray-50 rounded-lg px-2" ') + `<a href="#register" class="block w-full text-left py-2 font-medium text-primary">Join Us</a>` + `<a href="#login" class="block w-full bg-primary text-white text-center py-2 rounded-lg mt-2">Login</a>`;
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function handleDonationSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const newDonation = {
+                id: Date.now(),
+                donorName: App.data.user.name,
+                foodType: form.foodType.value,
+                quantity: form.quantity.value,
+                location: form.location.value,
+                expiry: form.expiry.value,
+                status: "Available",
+                image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&q=80&w=400", // Randomized placeholder in real app
+                timestamp: Date.now()
+            };
+            App.addDonation(newDonation);
+            alert("Thank you! Your donation has been posted.");
+            window.location.hash = '#dashboard';
+        }
+
+        // --- QUANTITY MODAL FUNCTIONS ---
+        let qtyModalState = { donationId: null, maxQty: 1, qtyStr: '' };
+
+        function parseQuantity(qtyStr) {
+            // Extract numeric value from strings like "20 Servings", "5 kg", "50"
+            const match = qtyStr.match(/(\d+)/);
+            return match ? parseInt(match[1]) : 1;
+        }
+
+        function openQtyModal(donationId, foodName, qtyStr) {
+            qtyModalState.donationId = donationId;
+            qtyModalState.qtyStr = qtyStr;
+            qtyModalState.maxQty = parseQuantity(qtyStr);
+
+            document.getElementById('qty-modal-food-name').textContent = foodName;
+            document.getElementById('qty-modal-available').textContent = qtyStr;
+            document.getElementById('qty-modal-max').textContent = qtyStr;
+            document.getElementById('qty-input').value = 1;
+            document.getElementById('qty-input').max = qtyModalState.maxQty;
+            document.getElementById('qty-bar').style.width = Math.round((1 / qtyModalState.maxQty) * 100) + '%';
+
+            document.getElementById('qty-modal').classList.remove('hidden');
+        }
+
+        function closeQtyModal() {
+            document.getElementById('qty-modal').classList.add('hidden');
+            qtyModalState = { donationId: null, maxQty: 1, qtyStr: '' };
+        }
+
+        function adjustQty(delta) {
+            const input = document.getElementById('qty-input');
+            let val = parseInt(input.value) || 1;
+            val = Math.max(1, Math.min(qtyModalState.maxQty, val + delta));
+            input.value = val;
+            // Update progress bar
+            document.getElementById('qty-bar').style.width = Math.round((val / qtyModalState.maxQty) * 100) + '%';
+        }
+
+        // Also handle manual typing in the input
+        document.addEventListener('DOMContentLoaded', () => {
+            // Will be bound after modal exists
+        });
+        // Use event delegation for the qty-input
+        document.addEventListener('input', (e) => {
+            if (e.target && e.target.id === 'qty-input') {
+                let val = parseInt(e.target.value) || 1;
+                if (val < 1) val = 1;
+                if (val > qtyModalState.maxQty) val = qtyModalState.maxQty;
+                e.target.value = val;
+                document.getElementById('qty-bar').style.width = Math.round((val / qtyModalState.maxQty) * 100) + '%';
+            }
+        });
+
+        function confirmQtyRequest() {
+            const qty = parseInt(document.getElementById('qty-input').value) || 1;
+            if (qty < 1 || qty > qtyModalState.maxQty) {
+                alert('Please enter a valid quantity between 1 and ' + qtyModalState.maxQty);
+                return;
+            }
+
+            // Build the quantity string with the unit from the original
+            const unit = qtyModalState.qtyStr.replace(/\d+/g, '').trim();
+            const requestedQtyStr = qty + (unit ? ' ' + unit : '');
+
+            App.requestDonation(qtyModalState.donationId, App.data.user.name, requestedQtyStr);
+            closeQtyModal();
+        }
+
+        function initAdminCharts() {
+            // --- Monthly Bar Chart: Claimed vs Wasted ---
+            const barCtx = document.getElementById('monthlyBarChart');
+            if (barCtx) {
+                if (window.monthlyBarChartInstance) window.monthlyBarChartInstance.destroy();
+
+                // Generate last 6 month labels
+                const now = new Date();
+                const monthLabels = [];
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    monthLabels.push(d.toLocaleString('default', { month: 'short', year: 'numeric' }));
+                }
+
+                // Calculate actual data from donations per month
+                const claimedPerMonth = new Array(6).fill(0);
+                const wastedPerMonth = new Array(6).fill(0);
+
+                App.data.donations.forEach(donation => {
+                    const donationDate = new Date(donation.timestamp || donation.claimedAt || donation.bookedAt || Date.now());
+                    for (let i = 5; i >= 0; i--) {
+                        const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+                        if (donationDate >= monthStart && donationDate <= monthEnd) {
+                            const idx = 5 - i;
+                            if (donation.status === 'Claimed') claimedPerMonth[idx]++;
+                            if (donation.status === 'Wasted' || donation.status === 'Expired') wastedPerMonth[idx]++;
+                        }
+                    }
+                });
+
+                // Add sample historical data for demo (previous months)
+                // Only pad months that have 0 data to show the chart isn't empty
+                const sampleClaimed = [12, 18, 15, 22, 8, 0];
+                const sampleWasted = [3, 5, 4, 6, 2, 0];
+                for (let i = 0; i < 6; i++) {
+                    if (claimedPerMonth[i] === 0 && wastedPerMonth[i] === 0 && i < 5) {
+                        claimedPerMonth[i] = sampleClaimed[i];
+                        wastedPerMonth[i] = sampleWasted[i];
+                    }
+                }
+                // Current month: add actual counts
+                const currentClaimed = App.data.donations.filter(d => d.status === 'Claimed').length;
+                const currentWasted = App.data.donations.filter(d => d.status === 'Wasted' || d.status === 'Expired').length;
+                claimedPerMonth[5] = Math.max(claimedPerMonth[5], currentClaimed);
+                wastedPerMonth[5] = Math.max(wastedPerMonth[5], currentWasted);
+
+                window.monthlyBarChartInstance = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [
+                            {
+                                label: 'Claimed (Saved)',
+                                data: claimedPerMonth,
+                                backgroundColor: '#10B981',
+                                borderRadius: 6,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7
+                            },
+                            {
+                                label: 'Wasted (Expired)',
+                                data: wastedPerMonth,
+                                backgroundColor: '#EF4444',
+                                borderRadius: 6,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 11 } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 5,
+                                    font: { size: 11 }
+                                },
+                                grid: { color: '#f3f4f6' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    padding: 15,
+                                    font: { size: 12 }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#1f2937',
+                                titleFont: { size: 13 },
+                                bodyFont: { size: 12 },
+                                padding: 10,
+                                cornerRadius: 8
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- Status Doughnut Chart ---
+            const doughnutCtx = document.getElementById('statusDoughnutChart');
+            if (doughnutCtx) {
+                if (window.statusDoughnutInstance) window.statusDoughnutInstance.destroy();
+
+                const available = App.data.donations.filter(d => d.status === 'Available').length;
+                const requested = App.data.donations.filter(d => d.status === 'Requested').length;
+                const claimed = App.data.donations.filter(d => d.status === 'Claimed').length;
+                const wasted = App.data.donations.filter(d => d.status === 'Wasted' || d.status === 'Expired').length;
+
+                window.statusDoughnutInstance = new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Available', 'Requested', 'Claimed', 'Wasted'],
+                        datasets: [{
+                            data: [available, requested, claimed, wasted],
+                            backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#EF4444'],
+                            borderWidth: 0,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    padding: 12,
+                                    font: { size: 11 }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#1f2937',
+                                padding: 10,
+                                cornerRadius: 8
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize
+        updateNavbar();
+
+        // Auto-expire bookings every 30 seconds
+        setInterval(() => {
+            App.checkExpiredBookings();
+        }, 30000);
+
+        // Live countdown timer update every second
+        setInterval(() => {
+            document.querySelectorAll('[data-booking-timer]').forEach(el => {
+                const id = parseInt(el.dataset.bookingTimer);
+                const donation = App.data.donations.find(d => d.id === id);
+                if (donation && donation.bookedUntil) {
+                    const remaining = donation.bookedUntil - Date.now();
+                    if (remaining <= 0) {
+                        el.textContent = 'Expired';
+                        el.classList.remove('timer-pulse');
+                        App.checkExpiredBookings();
+                        return;
+                    }
+                    const totalMins = Math.floor(remaining / 60000);
+                    const hrs = Math.floor(totalMins / 60);
+                    const mins = totalMins % 60;
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    const timeStr = hrs > 0 ? hrs + 'h ' + mins + 'm ' + secs + 's' : mins + 'm ' + secs + 's';
+                    el.innerHTML = '<i class="fas fa-hourglass-half mr-1"></i>' + timeStr;
+
+                    // Change color when < 30 mins
+                    if (totalMins < 30) {
+                        el.className = el.className.replace(/text-amber-700 bg-amber-100/g, 'text-red-600 bg-red-100');
+                    }
+                }
+            });
+        }, 1000);
+    </script>
+</body>
+
+</html>
